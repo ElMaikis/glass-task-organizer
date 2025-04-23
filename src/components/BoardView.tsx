@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useBoardStore } from "@/store/store";
 import { TaskList } from "@/components/TaskList";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ export function BoardView() {
   const [showAddList, setShowAddList] = useState(false);
   const [newListName, setNewListName] = useState("");
   const [boardName, setBoardName] = useState("");
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Create a default board if none exists
@@ -20,6 +21,27 @@ export function BoardView() {
       createBoard("My Tasks");
     }
   }, [board, createBoard]);
+
+  // Função para habilitar o scroll horizontal com roda do mouse
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    
+    if (scrollContainer) {
+      const handleWheel = (e: WheelEvent) => {
+        // Previne o scroll padrão
+        e.preventDefault();
+        
+        // Aplica o scroll horizontal
+        scrollContainer.scrollLeft += e.deltaY;
+      };
+      
+      scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        scrollContainer.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, []);
 
   const handleCreateBoard = () => {
     if (boardName.trim()) {
@@ -64,8 +86,12 @@ export function BoardView() {
       <Header />
       
       <div className="flex-1 relative">
-        <ScrollArea className="h-full">
-          <div className="flex gap-4 p-6">
+        <div 
+          ref={scrollContainerRef}
+          className="h-full overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
+          style={{ scrollBehavior: 'smooth' }}
+        >
+          <div className="flex gap-4 p-6 min-w-max">
             {/* Lists */}
             {board.lists.map((list) => (
               <TaskList key={list.id} list={list} />
@@ -113,8 +139,7 @@ export function BoardView() {
               </div>
             )}
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </div>
       </div>
     </div>
   );
