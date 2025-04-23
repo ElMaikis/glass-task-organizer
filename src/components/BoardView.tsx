@@ -1,52 +1,30 @@
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useBoardStore } from "@/store/store";
 import { TaskList } from "@/components/TaskList";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, ScrollText } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Header } from "@/components/Header";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 export function BoardView() {
   const { board, createBoard, createList } = useBoardStore();
   const [showAddList, setShowAddList] = useState(false);
   const [newListName, setNewListName] = useState("");
   const [boardName, setBoardName] = useState("");
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Create a default board if none exists
     if (!board) {
       createBoard("My Tasks");
     }
   }, [board, createBoard]);
-
-  // Função para lidar com o scroll horizontal usando o componente ScrollArea
-  const handleHorizontalScroll = useCallback((event: WheelEvent) => {
-    if (!scrollContainerRef.current || event.deltaY === 0) return;
-    
-    // Previne o scroll padrão
-    event.preventDefault();
-    
-    // Aplica o scroll horizontal
-    scrollContainerRef.current.scrollLeft += event.deltaY;
-  }, []);
-  
-  // Configurar e limpar o event listener para o scroll horizontal
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    
-    if (scrollContainer) {
-      // Adicionando o event listener com a função de callback
-      scrollContainer.addEventListener('wheel', handleHorizontalScroll, { passive: false });
-      
-      // Limpando o event listener quando o componente é desmontado
-      return () => {
-        scrollContainer.removeEventListener('wheel', handleHorizontalScroll);
-      };
-    }
-  }, [handleHorizontalScroll]); // Dependência no callback para recriar o listener quando necessário
 
   const handleCreateBoard = () => {
     if (boardName.trim()) {
@@ -90,62 +68,56 @@ export function BoardView() {
     <div className="h-full flex flex-col">
       <Header />
       
-      <div className="flex-1 relative">
-        <div 
-          ref={scrollContainerRef}
-          className="h-full overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
-          style={{ scrollBehavior: 'smooth' }}
-        >
-          <div className="flex gap-4 p-6 min-w-max">
-            {/* Lists */}
-            {board.lists.map((list) => (
-              <TaskList key={list.id} list={list} />
-            ))}
-            
-            {/* Add new list */}
-            {!showAddList ? (
-              <Button
-                variant="outline"
-                className="h-min w-72 flex gap-2 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
-                onClick={() => setShowAddList(true)}
+      <ScrollArea className="flex-1 px-6 py-4">
+        <Accordion type="single" collapsible className="space-y-4 w-full max-w-3xl mx-auto">
+          {board.lists.map((list) => (
+            <AccordionItem key={list.id} value={list.id} className="border-none">
+              <TaskList list={list} />
+            </AccordionItem>
+          ))}
+        </Accordion>
+
+        {!showAddList ? (
+          <Button
+            variant="outline"
+            className="mt-4 w-full max-w-3xl mx-auto flex gap-2 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
+            onClick={() => setShowAddList(true)}
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add List</span>
+          </Button>
+        ) : (
+          <div className="mt-4 w-full max-w-3xl mx-auto glass rounded-lg p-3 animate-fade-in">
+            <Input
+              value={newListName}
+              onChange={(e) => setNewListName(e.target.value)}
+              placeholder="Enter list name..."
+              className="mb-2"
+              autoFocus
+            />
+            <div className="flex gap-2">
+              <Button 
+                className="flex-1"
+                size="sm"
+                onClick={handleAddList}
               >
-                <Plus className="h-4 w-4" />
-                <span>Add List</span>
+                Add
               </Button>
-            ) : (
-              <div className="w-72 glass rounded-lg p-3 animate-fade-in">
-                <Input
-                  value={newListName}
-                  onChange={(e) => setNewListName(e.target.value)}
-                  placeholder="Enter list name..."
-                  className="mb-2"
-                  autoFocus
-                />
-                <div className="flex gap-2">
-                  <Button 
-                    className="flex-1"
-                    size="sm"
-                    onClick={handleAddList}
-                  >
-                    Add
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    className="flex-1"
-                    size="sm"
-                    onClick={() => {
-                      setShowAddList(false);
-                      setNewListName("");
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
+              <Button 
+                variant="outline"
+                className="flex-1"
+                size="sm"
+                onClick={() => {
+                  setShowAddList(false);
+                  setNewListName("");
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+      </ScrollArea>
     </div>
   );
 }

@@ -6,6 +6,10 @@ import { ListHeader } from "@/components/list/ListHeader";
 import { AddTaskForm } from "@/components/list/AddTaskForm";
 import { TaskEditDialog } from "@/components/task/TaskEditDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion"
 
 interface TaskListProps {
   list: List;
@@ -42,26 +46,30 @@ export function TaskList({ list }: TaskListProps) {
   };
 
   return (
-    <div className="w-72 flex flex-col glass rounded-lg h-full animate-scale-in">
-      <ListHeader 
-        list={list}
-        onUpdateList={updateList}
-        onDeleteList={deleteList}
-      />
+    <>
+      <AccordionTrigger className="px-4 py-2 glass hover:no-underline">
+        <ListHeader 
+          list={list}
+          onUpdateList={updateList}
+          onDeleteList={deleteList}
+        />
+      </AccordionTrigger>
       
-      <ScrollArea className="flex-1">
-        <div className="p-3 space-y-2">
-          {filteredTasks.map((task) => (
-            <TaskCard 
-              key={task.id} 
-              task={task}
-              onEdit={setEditingTask}
-            />
-          ))}
-          
-          <AddTaskForm onAddTask={handleCreateTask} />
-        </div>
-      </ScrollArea>
+      <AccordionContent>
+        <ScrollArea className="max-h-[60vh]">
+          <div className="px-4 py-2 space-y-2">
+            {filteredTasks.map((task) => (
+              <TaskCard 
+                key={task.id} 
+                task={task}
+                onEdit={setEditingTask}
+              />
+            ))}
+            
+            <AddTaskForm onAddTask={handleCreateTask} />
+          </div>
+        </ScrollArea>
+      </AccordionContent>
 
       <TaskEditDialog
         task={editingTask}
@@ -69,6 +77,6 @@ export function TaskList({ list }: TaskListProps) {
         onUpdate={updateTask}
         onDelete={deleteTask}
       />
-    </div>
+    </>
   );
 }
