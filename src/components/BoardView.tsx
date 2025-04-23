@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useBoardStore } from "@/store/store";
 import { TaskList } from "@/components/TaskList";
 import { Button } from "@/components/ui/button";
@@ -22,26 +22,31 @@ export function BoardView() {
     }
   }, [board, createBoard]);
 
-  // Função para habilitar o scroll horizontal com roda do mouse
+  // Função para lidar com o scroll horizontal usando o componente ScrollArea
+  const handleHorizontalScroll = useCallback((event: WheelEvent) => {
+    if (!scrollContainerRef.current || event.deltaY === 0) return;
+    
+    // Previne o scroll padrão
+    event.preventDefault();
+    
+    // Aplica o scroll horizontal
+    scrollContainerRef.current.scrollLeft += event.deltaY;
+  }, []);
+  
+  // Configurar e limpar o event listener para o scroll horizontal
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     
     if (scrollContainer) {
-      const handleWheel = (e: WheelEvent) => {
-        // Previne o scroll padrão
-        e.preventDefault();
-        
-        // Aplica o scroll horizontal
-        scrollContainer.scrollLeft += e.deltaY;
-      };
+      // Adicionando o event listener com a função de callback
+      scrollContainer.addEventListener('wheel', handleHorizontalScroll, { passive: false });
       
-      scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
-      
+      // Limpando o event listener quando o componente é desmontado
       return () => {
-        scrollContainer.removeEventListener('wheel', handleWheel);
+        scrollContainer.removeEventListener('wheel', handleHorizontalScroll);
       };
     }
-  }, []);
+  }, [handleHorizontalScroll]); // Dependência no callback para recriar o listener quando necessário
 
   const handleCreateBoard = () => {
     if (boardName.trim()) {
