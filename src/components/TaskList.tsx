@@ -5,6 +5,7 @@ import { TaskCard } from "@/components/TaskCard";
 import { ListHeader } from "@/components/list/ListHeader";
 import { AddTaskForm } from "@/components/list/AddTaskForm";
 import { TaskEditDialog } from "@/components/task/TaskEditDialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DndContext,
   closestCenter,
@@ -83,28 +84,30 @@ export function TaskList({ list }: TaskListProps) {
         onDeleteList={deleteList}
       />
       
-      <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-2 scrollbar-thin">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={filteredTasks.map(task => task.id)}
-            strategy={verticalListSortingStrategy}
+      <ScrollArea className="flex-1 p-2">
+        <div className="space-y-2 pr-2">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
           >
-            {filteredTasks.map((task) => (
-              <TaskCard 
-                key={task.id} 
-                task={task}
-                onEdit={setEditingTask}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
-        
-        <AddTaskForm onAddTask={handleCreateTask} />
-      </div>
+            <SortableContext
+              items={filteredTasks.map(task => task.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {filteredTasks.map((task) => (
+                <TaskCard 
+                  key={task.id} 
+                  task={task}
+                  onEdit={setEditingTask}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+          
+          <AddTaskForm onAddTask={handleCreateTask} />
+        </div>
+      </ScrollArea>
 
       <TaskEditDialog
         task={editingTask}
