@@ -6,18 +6,18 @@ import { useEffect, useState } from "react";
 export function ThemeToggle() {
   const [isDark, setIsDark] = useState(true);
 
-  // Initialize theme based on localStorage or default to dark
+  // Inicializa o tema com base no localStorage ou padrão para dark
   useEffect(() => {
+    // Primeiro, verifica se já existe uma preferência salva
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // Use saved theme, fallback to system preference, or default to dark
-    const initialDark = savedTheme ? savedTheme === 'dark' : prefersDark || true;
+    // Usa o tema salvo, recorre à preferência do sistema ou define como dark
+    const initialDark = savedTheme ? savedTheme === 'dark' : prefersDark;
     
     setIsDark(initialDark);
     applyTheme(initialDark);
     
-    // Add console log for debugging
     console.log('Theme initialized:', initialDark ? 'dark' : 'light');
   }, []);
 
@@ -26,32 +26,32 @@ export function ThemeToggle() {
     setIsDark(newIsDark);
     applyTheme(newIsDark);
     
-    // Save preference
+    // Salva a preferência
     localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
     
-    // Add console log for debugging
     console.log('Theme toggled to:', newIsDark ? 'dark' : 'light');
   };
   
   const applyTheme = (dark: boolean) => {
-    // Make sure we're directly accessing document.documentElement
+    // Garantindo que estamos acessando diretamente o elemento HTML
     const html = document.documentElement;
     
     if (dark) {
       html.classList.add('dark');
       html.classList.remove('light');
-      html.style.colorScheme = 'dark';
     } else {
       html.classList.remove('dark');
       html.classList.add('light');
-      html.style.colorScheme = 'light';
     }
     
-    // Force a re-render by triggering a small layout change
-    document.body.style.display = 'none';
+    // Define explicitamente o esquema de cores
+    html.style.colorScheme = dark ? 'dark' : 'light';
+    
+    // Força uma atualização visual completa
+    document.body.style.opacity = '0.99';
     setTimeout(() => {
-      document.body.style.display = '';
-    }, 5);
+      document.body.style.opacity = '1';
+    }, 10);
   };
 
   return (
@@ -60,14 +60,14 @@ export function ThemeToggle() {
       size="icon" 
       onClick={toggleTheme}
       className="rounded-full transition-all"
-      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      aria-label={isDark ? "Mudar para tema claro" : "Mudar para tema escuro"}
     >
       {isDark ? (
         <Sun className="h-5 w-5 text-yellow-200" />
       ) : (
         <Moon className="h-5 w-5" />
       )}
-      <span className="sr-only">Toggle theme</span>
+      <span className="sr-only">Alternar tema</span>
     </Button>
   );
 }
