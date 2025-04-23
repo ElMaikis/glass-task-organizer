@@ -6,20 +6,6 @@ import { ListHeader } from "@/components/list/ListHeader";
 import { AddTaskForm } from "@/components/list/AddTaskForm";
 import { TaskEditDialog } from "@/components/task/TaskEditDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
 
 interface TaskListProps {
   list: List;
@@ -32,20 +18,11 @@ export function TaskList({ list }: TaskListProps) {
     createTask,
     updateTask,
     deleteTask,
-    moveTask,
     filterCompleted,
     filterPriority
   } = useBoardStore();
   
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-
-  // Configurar sensores para drag and drop
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
   
   // Filtrar tarefas baseado nos filtros da store
   const filteredTasks = list.tasks.filter(task => {
@@ -60,18 +37,6 @@ export function TaskList({ list }: TaskListProps) {
     return true;
   });
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      const oldIndex = filteredTasks.findIndex((task) => task.id === active.id);
-      const newIndex = filteredTasks.findIndex((task) => task.id === over.id);
-      
-      // Atualiza a ordem das tarefas
-      moveTask(active.id as string, list.id, newIndex);
-    }
-  };
-
   const handleCreateTask = (name: string) => {
     createTask(list.id, name);
   };
@@ -84,26 +49,15 @@ export function TaskList({ list }: TaskListProps) {
         onDeleteList={deleteList}
       />
       
-      <ScrollArea className="flex-1 p-2">
-        <div className="space-y-2 pr-2">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={filteredTasks.map(task => task.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {filteredTasks.map((task) => (
-                <TaskCard 
-                  key={task.id} 
-                  task={task}
-                  onEdit={setEditingTask}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
+      <ScrollArea className="flex-1">
+        <div className="p-3 space-y-2">
+          {filteredTasks.map((task) => (
+            <TaskCard 
+              key={task.id} 
+              task={task}
+              onEdit={setEditingTask}
+            />
+          ))}
           
           <AddTaskForm onAddTask={handleCreateTask} />
         </div>

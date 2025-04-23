@@ -9,8 +9,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { useBoardStore } from "@/store/store";
 
 const priorityStyles = {
@@ -37,20 +35,6 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onEdit }: TaskCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: task.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   const { toggleTaskCompletion, deleteTask } = useBoardStore();
   const priorityStyle = priorityStyles[task.priority];
   
@@ -66,16 +50,11 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
 
   return (
     <div 
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
       onClick={() => onEdit(task)}
       className={cn(
-        "card-glass p-3 flex flex-col gap-2 cursor-move",
+        "card-glass p-3 flex flex-col gap-2 cursor-pointer",
         task.completed && "opacity-60",
         priorityStyle.border,
-        isDragging && "opacity-50 shadow-lg",
       )}
     >
       <div className="flex items-start justify-between gap-2">
