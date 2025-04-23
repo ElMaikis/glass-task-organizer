@@ -7,6 +7,14 @@ import { AddTaskForm } from "@/components/list/AddTaskForm";
 import { TaskEditDialog } from "@/components/task/TaskEditDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface TaskListProps {
   list: List;
@@ -48,16 +56,39 @@ export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
   if (!isExpanded) {
     return (
       <Card 
-        className="h-full w-full cursor-pointer hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col" 
-        onClick={onClick}
+        className="h-48 w-full cursor-pointer hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col animate-in fade-in-0 zoom-in-95" 
       >
-        <div className="p-3 border-b border-white/10">
-          <h3 className="font-semibold truncate">{list.name}</h3>
-          <p className="text-xs text-muted-foreground mt-1">
-            {filteredTasks.length} task{filteredTasks.length !== 1 ? 's' : ''}
-          </p>
+        <div className="p-3 border-b border-white/10 flex items-center justify-between">
+          <h3 className="font-semibold truncate flex-1">{list.name}</h3>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon" className="h-6 w-6 opacity-50 hover:opacity-100">
+                <MoreVertical className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={(e) => {
+                e.stopPropagation();
+                const newName = prompt("Digite o novo nome da lista:", list.name);
+                if (newName) updateList(list.id, newName);
+              }}>
+                Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (confirm("Deseja realmente excluir esta lista?")) {
+                    deleteList(list.id);
+                  }
+                }} 
+                className="text-destructive"
+              >
+                Excluir
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <CardContent className="flex-1 p-2 overflow-hidden">
+        <CardContent className="flex-1 p-2 overflow-hidden" onClick={onClick}>
           <ScrollArea className="h-full w-full">
             <div className="space-y-1">
               {filteredTasks.slice(0, 3).map((task) => (
@@ -88,7 +119,7 @@ export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
   // Expanded view for detailed task management
   return (
     <>
-      <div className="glass rounded-lg overflow-hidden mb-4">
+      <div className="glass rounded-lg overflow-hidden mb-4 animate-in slide-in-from-right duration-300">
         <div className="p-4">
           <ListHeader 
             list={list}

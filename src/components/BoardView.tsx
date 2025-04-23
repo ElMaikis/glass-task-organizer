@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useBoardStore } from "@/store/store";
 import { TaskList } from "@/components/TaskList";
@@ -72,7 +71,7 @@ export function BoardView() {
     const expandedList = board.lists.find(list => list.id === expandedListId);
     if (expandedList) {
       return (
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col animate-in fade-in slide-in-from-right duration-300">
           <Header />
           
           <div className="p-4 flex items-center">
@@ -104,11 +103,10 @@ export function BoardView() {
       <Header />
       
       <ScrollArea className="flex-1 px-6 py-4">
-        <div className="flex flex-wrap gap-4 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 max-w-[1920px] mx-auto">
           {board.lists.map((list) => (
             <div 
-              key={list.id} 
-              className="w-64 h-48" 
+              key={list.id}
               onClick={() => handleExpandList(list.id)}
             >
               <TaskList 
@@ -122,14 +120,14 @@ export function BoardView() {
           {!showAddList ? (
             <Button
               variant="outline"
-              className="w-64 h-48 flex flex-col justify-center items-center gap-2 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
+              className="h-48 w-full flex flex-col justify-center items-center gap-2 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
               onClick={() => setShowAddList(true)}
             >
               <Plus className="h-6 w-6" />
               <span>Add List</span>
             </Button>
           ) : (
-            <div className="w-64 h-48 glass rounded-lg p-3 animate-fade-in flex flex-col justify-center">
+            <div className="h-48 w-full glass rounded-lg p-3 animate-in fade-in flex flex-col justify-center">
               <Input
                 value={newListName}
                 onChange={(e) => setNewListName(e.target.value)}
