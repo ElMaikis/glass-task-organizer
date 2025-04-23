@@ -4,8 +4,9 @@ import { useBoardStore } from "@/store/store";
 import { TaskList } from "@/components/TaskList";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Plus, ScrollText } from "lucide-react";
 import { Header } from "@/components/Header";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export function BoardView() {
   const { board, createBoard, createList } = useBoardStore();
@@ -62,55 +63,58 @@ export function BoardView() {
     <div className="h-full flex flex-col">
       <Header />
       
-      <div className="flex-1 overflow-x-auto overflow-y-hidden p-6">
-        <div className="flex gap-4 h-full">
-          {/* Lists */}
-          {board.lists.map((list) => (
-            <TaskList key={list.id} list={list} />
-          ))}
-          
-          {/* Add new list */}
-          {!showAddList ? (
-            <Button
-              variant="outline"
-              className="h-min w-72 flex gap-2 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
-              onClick={() => setShowAddList(true)}
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add List</span>
-            </Button>
-          ) : (
-            <div className="w-72 glass rounded-lg p-3 animate-fade-in">
-              <Input
-                value={newListName}
-                onChange={(e) => setNewListName(e.target.value)}
-                placeholder="Enter list name..."
-                className="mb-2"
-                autoFocus
-              />
-              <div className="flex gap-2">
-                <Button 
-                  className="flex-1"
-                  size="sm"
-                  onClick={handleAddList}
-                >
-                  Add
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="flex-1"
-                  size="sm"
-                  onClick={() => {
-                    setShowAddList(false);
-                    setNewListName("");
-                  }}
-                >
-                  Cancel
-                </Button>
+      <div className="flex-1 relative">
+        <ScrollArea className="h-full">
+          <div className="flex gap-4 p-6">
+            {/* Lists */}
+            {board.lists.map((list) => (
+              <TaskList key={list.id} list={list} />
+            ))}
+            
+            {/* Add new list */}
+            {!showAddList ? (
+              <Button
+                variant="outline"
+                className="h-min w-72 flex gap-2 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
+                onClick={() => setShowAddList(true)}
+              >
+                <Plus className="h-4 w-4" />
+                <span>Add List</span>
+              </Button>
+            ) : (
+              <div className="w-72 glass rounded-lg p-3 animate-fade-in">
+                <Input
+                  value={newListName}
+                  onChange={(e) => setNewListName(e.target.value)}
+                  placeholder="Enter list name..."
+                  className="mb-2"
+                  autoFocus
+                />
+                <div className="flex gap-2">
+                  <Button 
+                    className="flex-1"
+                    size="sm"
+                    onClick={handleAddList}
+                  >
+                    Add
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="flex-1"
+                    size="sm"
+                    onClick={() => {
+                      setShowAddList(false);
+                      setNewListName("");
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
     </div>
   );
