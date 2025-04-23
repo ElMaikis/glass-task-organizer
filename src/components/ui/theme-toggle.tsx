@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
-  // Check local storage for saved theme preference
   const [isDark, setIsDark] = useState(true);
 
   // Initialize theme based on localStorage or default to dark
@@ -17,6 +16,9 @@ export function ThemeToggle() {
     
     setIsDark(initialDark);
     applyTheme(initialDark);
+    
+    // Add console log for debugging
+    console.log('Theme initialized:', initialDark ? 'dark' : 'light');
   }, []);
 
   const toggleTheme = () => {
@@ -26,16 +28,30 @@ export function ThemeToggle() {
     
     // Save preference
     localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+    
+    // Add console log for debugging
+    console.log('Theme toggled to:', newIsDark ? 'dark' : 'light');
   };
   
   const applyTheme = (dark: boolean) => {
+    // Make sure we're directly accessing document.documentElement
+    const html = document.documentElement;
+    
     if (dark) {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
+      html.classList.add('dark');
+      html.classList.remove('light');
+      html.style.colorScheme = 'dark';
     } else {
-      document.documentElement.classList.add('light');
-      document.documentElement.classList.remove('dark');
+      html.classList.remove('dark');
+      html.classList.add('light');
+      html.style.colorScheme = 'light';
     }
+    
+    // Force a re-render by triggering a small layout change
+    document.body.style.display = 'none';
+    setTimeout(() => {
+      document.body.style.display = '';
+    }, 5);
   };
 
   return (
@@ -44,6 +60,7 @@ export function ThemeToggle() {
       size="icon" 
       onClick={toggleTheme}
       className="rounded-full transition-all"
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
     >
       {isDark ? (
         <Sun className="h-5 w-5 text-yellow-200" />
