@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import { persist } from 'zustand/middleware';
@@ -374,18 +373,7 @@ export const useBoardStore = create<BoardStore>()(
       }
     }),
     {
-      name: 'board-storage', // Nome da chave no localStorage
-      // Configuração para lidar com datas no localStorage
-      serialize: (state) => JSON.stringify(state),
-      deserialize: (str) => {
-        if (!str) return {};
-        try {
-          return JSON.parse(str, dateReviver);
-        } catch (e) {
-          console.error('Error deserializing board data:', e);
-          return {};
-        }
-      }
+      name: 'board-storage',
     }
   )
 );

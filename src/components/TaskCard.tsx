@@ -1,8 +1,7 @@
-
-import { Calendar, Check, Clock, Edit, Star, Trash2 } from "lucide-react";
+import { Calendar, Check, Clock, Star, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
-import { Task, useBoardStore } from "@/store/store";
+import { Task } from "@/store/store";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -10,8 +9,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-// Map priority to styles
 const priorityStyles = {
   low: {
     bg: "bg-priority-low/20",
@@ -36,6 +36,20 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onEdit }: TaskCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   const { toggleTaskCompletion, deleteTask } = useBoardStore();
   const priorityStyle = priorityStyles[task.priority];
   
@@ -51,11 +65,16 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
 
   return (
     <div 
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       onClick={() => onEdit(task)}
       className={cn(
-        "card-glass p-3 flex flex-col gap-2 cursor-pointer animate-fade-in",
+        "card-glass p-3 flex flex-col gap-2 cursor-move",
         task.completed && "opacity-60",
-        priorityStyle.border
+        priorityStyle.border,
+        isDragging && "opacity-50 shadow-lg",
       )}
     >
       <div className="flex items-start justify-between gap-2">
