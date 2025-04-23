@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useBoardStore } from "@/store/store";
 
 const priorityStyles = {
   low: {
