@@ -4,21 +4,16 @@ import { useBoardStore } from "@/store/store";
 import { TaskList } from "@/components/TaskList";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
 import { Header } from "@/components/Header";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 
 export function BoardView() {
   const { board, createBoard, createList } = useBoardStore();
   const [showAddList, setShowAddList] = useState(false);
   const [newListName, setNewListName] = useState("");
   const [boardName, setBoardName] = useState("");
+  const [expandedListId, setExpandedListId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!board) {
@@ -39,6 +34,14 @@ export function BoardView() {
       setNewListName("");
       setShowAddList(false);
     }
+  };
+
+  const handleExpandList = (listId: string) => {
+    setExpandedListId(listId);
+  };
+
+  const handleCollapseList = () => {
+    setExpandedListId(null);
   };
 
   if (!board) {
@@ -64,59 +67,99 @@ export function BoardView() {
     );
   }
 
+  // Show expanded list view if a list is selected
+  if (expandedListId) {
+    const expandedList = board.lists.find(list => list.id === expandedListId);
+    if (expandedList) {
+      return (
+        <div className="h-full flex flex-col">
+          <Header />
+          
+          <div className="p-4 flex items-center">
+            <Button 
+              variant="outline" 
+              className="mr-2 flex items-center" 
+              onClick={handleCollapseList}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Lists
+            </Button>
+            <h2 className="text-xl font-medium">{expandedList.name}</h2>
+          </div>
+          
+          <ScrollArea className="flex-1 px-6 pb-4">
+            <TaskList 
+              list={expandedList} 
+              isExpanded={true} 
+            />
+          </ScrollArea>
+        </div>
+      );
+    }
+  }
+
+  // Show grid of lists
   return (
     <div className="h-full flex flex-col">
       <Header />
       
       <ScrollArea className="flex-1 px-6 py-4">
-        <Accordion type="single" collapsible className="space-y-4 w-full max-w-3xl mx-auto">
+        <div className="flex flex-wrap gap-4 max-w-5xl mx-auto">
           {board.lists.map((list) => (
-            <AccordionItem key={list.id} value={list.id} className="border-none">
-              <TaskList list={list} />
-            </AccordionItem>
-          ))}
-        </Accordion>
-
-        {!showAddList ? (
-          <Button
-            variant="outline"
-            className="mt-4 w-full max-w-3xl mx-auto flex gap-2 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
-            onClick={() => setShowAddList(true)}
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add List</span>
-          </Button>
-        ) : (
-          <div className="mt-4 w-full max-w-3xl mx-auto glass rounded-lg p-3 animate-fade-in">
-            <Input
-              value={newListName}
-              onChange={(e) => setNewListName(e.target.value)}
-              placeholder="Enter list name..."
-              className="mb-2"
-              autoFocus
-            />
-            <div className="flex gap-2">
-              <Button 
-                className="flex-1"
-                size="sm"
-                onClick={handleAddList}
-              >
-                Add
-              </Button>
-              <Button 
-                variant="outline"
-                className="flex-1"
-                size="sm"
-                onClick={() => {
-                  setShowAddList(false);
-                  setNewListName("");
-                }}
-              >
-                Cancel
-              </Button>
+            <div 
+              key={list.id} 
+              className="w-64 h-48" 
+              onClick={() => handleExpandList(list.id)}
+            >
+              <TaskList 
+                list={list} 
+                isExpanded={false}
+                onClick={() => handleExpandList(list.id)}
+              />
             </div>
-          </div>
-        )}
+          ))}
+          
+          {!showAddList ? (
+            <Button
+              variant="outline"
+              className="w-64 h-48 flex flex-col justify-center items-center gap-2 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
+              onClick={() => setShowAddList(true)}
+            >
+              <Plus className="h-6 w-6" />
+              <span>Add List</span>
+            </Button>
+          ) : (
+            <div className="w-64 h-48 glass rounded-lg p-3 animate-fade-in flex flex-col justify-center">
+              <Input
+                value={newListName}
+                onChange={(e) => setNewListName(e.target.value)}
+                placeholder="Enter list name..."
+                className="mb-2"
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <Button 
+                  className="flex-1"
+                  size="sm"
+                  onClick={handleAddList}
+                >
+                  Add
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="flex-1"
+                  size="sm"
+                  onClick={() => {
+                    setShowAddList(false);
+                    setNewListName("");
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </ScrollArea>
     </div>
   );
