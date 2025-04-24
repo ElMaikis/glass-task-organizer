@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useBoardStore } from "@/store/store";
 import { TaskList } from "@/components/TaskList";
@@ -106,7 +107,6 @@ export function BoardView() {
           {board.lists.map((list) => (
             <div 
               key={list.id}
-              onClick={() => handleExpandList(list.id)}
             >
               <TaskList 
                 list={list} 

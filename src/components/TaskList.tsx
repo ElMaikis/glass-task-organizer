@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useBoardStore, List, Task } from "@/store/store";
 import { TaskCard } from "@/components/TaskCard";
@@ -18,10 +19,11 @@ import {
 interface TaskListProps {
   list: List;
   isExpanded: boolean;
-  onCollapse?: () => void; // Add this prop
+  onCollapse?: () => void; // This is the correct prop name we're using
+  onClick?: () => void; // Adding this back for compatibility with BoardView
 }
 
-export function TaskList({ list, isExpanded, onCollapse }: TaskListProps) {
+export function TaskList({ list, isExpanded, onCollapse, onClick }: TaskListProps) {
   const { 
     updateList, 
     deleteList, 
@@ -54,7 +56,7 @@ export function TaskList({ list, isExpanded, onCollapse }: TaskListProps) {
     return (
       <Card 
         className="h-48 w-full cursor-pointer hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col animate-in fade-in-0 zoom-in-95" 
-        onClick={onClick}
+        onClick={onClick} // Use the onClick prop here
       >
         <div className="p-3 border-b border-white/10 flex items-center justify-between">
           <h3 className="font-semibold truncate flex-1">{list.name}</h3>
