@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useBoardStore, List, Task } from "@/store/store";
 import { TaskCard } from "@/components/TaskCard";
@@ -19,10 +18,10 @@ import {
 interface TaskListProps {
   list: List;
   isExpanded: boolean;
-  onClick?: () => void;
+  onCollapse?: () => void; // Add this prop
 }
 
-export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
+export function TaskList({ list, isExpanded, onCollapse }: TaskListProps) {
   const { 
     updateList, 
     deleteList, 
@@ -129,7 +128,7 @@ export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
               variant="ghost"
               size="icon"
               className="ml-2"
-              onClick={onClick}
+              onClick={onCollapse} // Use the onCollapse prop here
             >
               <X className="h-5 w-5" />
             </Button>

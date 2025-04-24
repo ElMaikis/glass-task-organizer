@@ -89,6 +89,7 @@ export function BoardView() {
             <TaskList 
               list={expandedList} 
               isExpanded={true} 
+              onCollapse={handleCollapseList}
             />
           </div>
         </div>
