@@ -8,7 +8,7 @@ import { TaskEditDialog } from "@/components/task/TaskEditDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreVertical } from "lucide-react";
+import { X, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -117,27 +117,39 @@ export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
 
   return (
     <>
-      <div 
-        className="fixed inset-0 z-50 bg-background animate-in zoom-in-95 slide-in-from-bottom-2 duration-300"
-      >
+      <div className="fixed inset-0 z-50 bg-background animate-in zoom-in-95 slide-in-from-bottom-2 duration-300">
         <div className="p-4 h-full flex flex-col">
-          <ListHeader 
-            list={list}
-            onUpdateList={updateList}
-            onDeleteList={deleteList}
-          />
+          <div className="flex items-center justify-between mb-4">
+            <ListHeader 
+              list={list}
+              onUpdateList={updateList}
+              onDeleteList={deleteList}
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="ml-2"
+              onClick={onClick}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
           
           <ScrollArea className="flex-1 mt-4">
-            <div className="px-4 py-2 space-y-3">
-              {filteredTasks.map((task) => (
-                <TaskCard 
-                  key={task.id} 
-                  task={task}
-                  onEdit={setEditingTask}
-                />
-              ))}
+            <div className="px-4 py-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {filteredTasks.map((task) => (
+                  <TaskCard 
+                    key={task.id} 
+                    task={task}
+                    onEdit={setEditingTask}
+                  />
+                ))}
+              </div>
               
-              <AddTaskForm onAddTask={handleCreateTask} />
+              <div className="mt-4">
+                <AddTaskForm onAddTask={handleCreateTask} />
+              </div>
             </div>
           </ScrollArea>
         </div>
