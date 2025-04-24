@@ -1,5 +1,3 @@
-
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Filter, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useBoardStore, Priority } from "@/store/store";
+import { useBoardStore } from "@/store/store";
 
 export function Header() {
   const { 
@@ -87,7 +85,6 @@ export function Header() {
           <Plus className="h-4 w-4" />
           <span>Add List</span>
         </Button>
-        <ThemeToggle />
       </div>
     </header>
   );
