@@ -66,40 +66,38 @@ export function BoardView() {
     );
   }
 
-  // Show expanded list view if a list is selected
   if (expandedListId) {
     const expandedList = board.lists.find(list => list.id === expandedListId);
     if (expandedList) {
       return (
-        <div className="h-full flex flex-col animate-in fade-in slide-in-from-right duration-300">
+        <div className="h-full flex flex-col">
           <Header />
           
-          <div className="p-4 flex items-center">
-            <Button 
-              variant="outline" 
-              className="mr-2 flex items-center" 
-              onClick={handleCollapseList}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Lists
-            </Button>
-            <h2 className="text-xl font-medium">{expandedList.name}</h2>
-          </div>
-          
-          <ScrollArea className="flex-1 px-6 pb-4">
+          <div className="fixed inset-0 z-40 flex flex-col animate-in fade-in slide-in-from-bottom duration-300">
+            <div className="p-4 flex items-center bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              <Button 
+                variant="outline" 
+                className="mr-2 flex items-center" 
+                onClick={handleCollapseList}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Lists
+              </Button>
+              <h2 className="text-xl font-medium">{expandedList.name}</h2>
+            </div>
+            
             <TaskList 
               list={expandedList} 
               isExpanded={true} 
             />
-          </ScrollArea>
+          </div>
         </div>
       );
     }
   }
 
-  // Show grid of lists
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col animate-in fade-in slide-in-from-top duration-300">
       <Header />
       
       <ScrollArea className="flex-1 px-6 py-4">

@@ -35,7 +35,6 @@ export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
   
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   
-  // Filtrar tarefas baseado nos filtros da store
   const filteredTasks = list.tasks.filter(task => {
     if (filterCompleted && task.completed) {
       return false;
@@ -52,11 +51,11 @@ export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
     createTask(list.id, name);
   };
 
-  // Compact card view for lists grid
   if (!isExpanded) {
     return (
       <Card 
         className="h-48 w-full cursor-pointer hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col animate-in fade-in-0 zoom-in-95" 
+        onClick={onClick}
       >
         <div className="p-3 border-b border-white/10 flex items-center justify-between">
           <h3 className="font-semibold truncate flex-1">{list.name}</h3>
@@ -88,7 +87,7 @@ export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <CardContent className="flex-1 p-2 overflow-hidden" onClick={onClick}>
+        <CardContent className="flex-1 p-2 overflow-hidden">
           <ScrollArea className="h-full w-full">
             <div className="space-y-1">
               {filteredTasks.slice(0, 3).map((task) => (
@@ -116,31 +115,32 @@ export function TaskList({ list, isExpanded, onClick }: TaskListProps) {
     );
   }
 
-  // Expanded view for detailed task management
   return (
     <>
-      <div className="glass rounded-lg overflow-hidden mb-4 animate-in slide-in-from-right duration-300">
-        <div className="p-4">
+      <div 
+        className="fixed inset-0 z-50 bg-background animate-in zoom-in-95 slide-in-from-bottom-2 duration-300"
+      >
+        <div className="p-4 h-full flex flex-col">
           <ListHeader 
             list={list}
             onUpdateList={updateList}
             onDeleteList={deleteList}
           />
+          
+          <ScrollArea className="flex-1 mt-4">
+            <div className="px-4 py-2 space-y-3">
+              {filteredTasks.map((task) => (
+                <TaskCard 
+                  key={task.id} 
+                  task={task}
+                  onEdit={setEditingTask}
+                />
+              ))}
+              
+              <AddTaskForm onAddTask={handleCreateTask} />
+            </div>
+          </ScrollArea>
         </div>
-        
-        <ScrollArea className="max-h-[70vh]">
-          <div className="px-4 py-2 space-y-3">
-            {filteredTasks.map((task) => (
-              <TaskCard 
-                key={task.id} 
-                task={task}
-                onEdit={setEditingTask}
-              />
-            ))}
-            
-            <AddTaskForm onAddTask={handleCreateTask} />
-          </div>
-        </ScrollArea>
       </div>
 
       <TaskEditDialog
