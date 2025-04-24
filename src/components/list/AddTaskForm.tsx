@@ -30,7 +30,7 @@ export function AddTaskForm({ onAddTask }: AddTaskFormProps) {
     return (
       <Button 
         variant="ghost"
-        className="flex gap-1.5 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors"
+        className="flex gap-1.5 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 transition-colors h-full w-full"
         onClick={() => setShowAddTask(true)}
       >
         <Plus className="h-4 w-4" />
@@ -40,12 +40,12 @@ export function AddTaskForm({ onAddTask }: AddTaskFormProps) {
   }
 
   return (
-    <div className="card-glass p-2 flex flex-col gap-2">
+    <div className="bg-white/5 border border-white/20 rounded-lg p-3 h-full flex flex-col justify-center">
       <Input
         value={newTaskName}
         onChange={(e) => setNewTaskName(e.target.value)}
         placeholder="Enter task name..."
-        className="h-8"
+        className="h-8 mb-2"
         autoFocus
         onKeyDown={handleKeyDown}
       />
