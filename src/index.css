@@ -97,6 +97,7 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased dark;
+    background: linear-gradient(to bottom, hsl(230 25% 12%), hsl(250 25% 16%));
   }
 }
 

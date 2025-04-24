@@ -55,8 +55,8 @@ export function TaskList({ list, isExpanded, onCollapse, onClick }: TaskListProp
   if (!isExpanded) {
     return (
       <Card 
-        className="h-48 w-full cursor-pointer hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col animate-in fade-in-0 zoom-in-95" 
-        onClick={onClick} // Use the onClick prop here
+        className="h-48 w-full cursor-pointer hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col animate-in fade-in-0 zoom-in-95 card-glass" 
+        onClick={onClick}
       >
         <div className="p-3 border-b border-white/10 flex items-center justify-between">
           <h3 className="font-semibold truncate flex-1">{list.name}</h3>
@@ -118,7 +118,7 @@ export function TaskList({ list, isExpanded, onCollapse, onClick }: TaskListProp
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-background animate-in zoom-in-95 slide-in-from-bottom-2 duration-300">
+      <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm animate-in zoom-in-95 slide-in-from-bottom-2 duration-300">
         <div className="p-4 h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <ListHeader 

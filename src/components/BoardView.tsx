@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useBoardStore } from "@/store/store";
 import { TaskList } from "@/components/TaskList";
@@ -47,7 +46,7 @@ export function BoardView() {
   if (!board) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="w-full max-w-md p-6 glass rounded-xl">
+        <div className="w-full max-w-md p-6 card-glass">
           <h2 className="text-2xl font-semibold mb-4">Welcome to FocusFlow</h2>
           <p className="mb-6 text-muted-foreground">
             Get started by creating your first board to organize your tasks.
